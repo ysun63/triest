@@ -266,6 +266,7 @@ void ReservoirAddRemSampler::exec_operation(const EdgeUpdate& update){
 
 	counter_->new_update(update);
 
+    // if sign = +1
 	if(update.is_add){
 		assert(reservoir_map_.find(edge) == reservoir_map_.end());
 
@@ -277,13 +278,18 @@ void ReservoirAddRemSampler::exec_operation(const EdgeUpdate& update){
         assert(reservoir_.size() < reservoir_size_);
 
         add_reservoir(edge);
+        //return True, condition 3
         counter_->add_triangles(edge.first, edge.second, 1.0); //Weight not used
+
       } else {
         d_o_ --;
+        //return False, condition 4
+        /*update_baskets(edge.timestamp,+)*/
       }
     } else if (reservoir_.size() < reservoir_size_){ // enough space and d_i + d_o = 0
 
 			add_reservoir(edge);
+	    //return True, condition 1
       counter_->add_triangles(edge.first, edge.second, 1.0); //Weight not used
 
 		} else { // reservoid full and d_i + d_o = 0
@@ -301,7 +307,7 @@ void ReservoirAddRemSampler::exec_operation(const EdgeUpdate& update){
 
         size_t before_size = reservoir_.size();
 
-                /*update_baskets(edge.timestamp,+)*/
+                /*update_baskets(to_remove.timestamp,+)*/
 				delete_reservoir(to_remove);
 				add_reservoir(edge);
 
@@ -311,11 +317,11 @@ void ReservoirAddRemSampler::exec_operation(const EdgeUpdate& update){
         assert (reservoir_map_.find(edge) != reservoir_map_.end());
         assert(reservoir_.size()== before_size);
 
-
+                //return True, condition 2
 				counter_->add_triangles(edge.first, edge.second, 1.0); //Weight not used
 			}
 		}
-	} else { // is remove
+	} else { // is remove, sign = -
     assert(counter_->edges_present_original()>=0);
 
 		if (reservoir_map_.find(edge) != reservoir_map_.end()){//Was present
