@@ -290,6 +290,9 @@ void ReservoirAddRemSampler::exec_operation(const EdgeUpdate& update){
       assert (counter_->edges_present_original()>reservoir_size_);
 
 			double u_rand = (double)rand() / ((double)RAND_MAX+1.0);
+
+			/*thres need to be changed to (double)reservoir_size_/((double)
+		    reservoir_size_+(double)basket_size_) */
 			double thres = ((double)reservoir_size_)/(counter_->edges_present_original());
 			if (u_rand < thres){
 				// Doing the exchange
@@ -298,6 +301,7 @@ void ReservoirAddRemSampler::exec_operation(const EdgeUpdate& update){
 
         size_t before_size = reservoir_.size();
 
+                /*update_baskets(edge.timestamp,+)*/
 				delete_reservoir(to_remove);
 				add_reservoir(edge);
 
